@@ -1,0 +1,58 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  quality:
+    name: Auditoría y pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Auditoría de seguridad
+        run: npm audit --audit-level=high
+
+      - name: Pruebas unitarias con cobertura
+        run: npm test
+        env:
+          NODE_ENV: test
+          JWT_SECRET: ci-jwt-secret-red-solidaria
+
+      - name: Publicar resumen de cobertura
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "const s=require('./coverage/coverage-summary.json').total; console.log('Cobertura líneas:', s.lines.pct + '%'); console.log('Cobertura ramas:', s.branches.pct + '%');"
+          fi
+
+  deploy-staging:
+    name: Despliegue a Staging
+    needs: quality
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    environment: staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Simular despliegue automático a Staging
+        run: |
+          echo "Simulando despliegue de Red Solidaria Villahermosa API a Staging"
+          echo "Commit: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Entorno: staging"
+          echo "Despliegue simulado completado."
