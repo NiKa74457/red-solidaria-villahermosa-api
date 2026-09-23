@@ -91,7 +91,7 @@
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Rol de Usuario</label>
-                  <select id="reg-role" class="form-select">
+                  <select id="reg-role" class="form-select" required>
                     <option value="donante">Donante</option>
                     <option value="empresa">Empresa</option>
                     <option value="organizacion">Organización</option>
@@ -353,19 +353,19 @@
     }
     checkHealth();
 
-    // Manejar Registro (Envía 'nombre' y 'name' simultáneamente)
+    // Manejar Registro (Envía 'nombre', 'name' y 'rol' correctamente)
     document.getElementById('form-register').addEventListener('submit', async (e) => {
       e.preventDefault();
       const nameVal = document.getElementById('reg-name').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
-      const role = document.getElementById('reg-role').value;
+      const rolVal = document.getElementById('reg-role').value;
 
       try {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nameVal, name: nameVal, email, password, role })
+          body: JSON.stringify({ nombre: nameVal, name: nameVal, email, password, rol: rolVal, role: rolVal })
         });
         const data = await res.json();
         document.getElementById('reg-result').innerHTML = `<div class="alert alert-${res.ok ? 'success' : 'danger'} p-2">${data.message || 'Usuario registrado exitosamente'}</div>`;
@@ -399,7 +399,7 @@
       }
     });
 
-    // Probar Ruta RBAC (con endpoints correctos y funcionales)
+    // Probar Ruta RBAC
     async function testRoute(endpoint) {
       const out = document.getElementById('rbac-output');
       out.innerText = 'Cargando respuesta...';
