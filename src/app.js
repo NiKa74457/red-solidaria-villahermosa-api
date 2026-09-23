@@ -28,4 +28,9 @@ function createApp() {
   return app;
 }
 
-module.exports = { createApp };
+// Instancia para Vercel
+const app = createApp();
+
+// Exporta la app como exportación principal para Vercel y mantiene createApp para Jest/tests
+module.exports = app;
+module.exports.createApp = createApp;
