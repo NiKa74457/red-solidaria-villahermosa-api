@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const authRoutes = require('./routes/auth.routes');
 const rbacRoutes = require('./routes/rbac.routes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
@@ -9,7 +10,14 @@ function createApp() {
 
   app.use(cors());
   app.use(express.json());
-  app.use(express.static('public'));
+
+  // Servir archivos estáticos apuntando a la ruta absoluta de public
+  app.use(express.static(path.join(__dirname, '../public')));
+
+  // Servir index.html en la raíz '/'
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
 
   app.get('/health', (req, res) => {
     res.status(200).json({
@@ -28,9 +36,7 @@ function createApp() {
   return app;
 }
 
-// Instancia para Vercel
 const app = createApp();
 
-// Exporta la app como exportación principal para Vercel y mantiene createApp para Jest/tests
 module.exports = app;
 module.exports.createApp = createApp;
