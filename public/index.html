@@ -3,197 +3,382 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Red Solidaria Villahermosa — Panel Interactivo</title>
+  <title>Red Solidaria Villahermosa - Demostración del Sistema</title>
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
-    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .card { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .nav-pills .nav-link { font-weight: 600; color: #495057; border-radius: 8px; padding: 0.6rem 1.2rem; }
-    .nav-pills .nav-link.active { background-color: #0d6efd; color: #fff; }
-    .token-box { word-break: break-all; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; max-height: 120px; overflow-y: auto; }
+    body { background-color: #f8f9fa; }
+    .hero-header { background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; }
+    .status-badge { font-size: 0.9rem; }
+    .nav-pills .nav-link.active { background-color: #0d6efd; font-weight: 600; }
+    .nav-pills .nav-link { color: #495057; background-color: #fff; border: 1px solid #dee2e6; margin: 0 0.2rem; }
+    .card-custom { border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .timeline-steps { display: flex; justify-content: space-between; position: relative; margin-top: 2rem; }
+    .timeline-step { text-align: center; position: relative; z-index: 1; flex: 1; }
+    .timeline-icon { width: 40px; height: 40px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; color: #6c757d; font-weight: bold; }
+    .timeline-step.completed .timeline-icon { background: #198754; color: white; }
+    .timeline-step.active .timeline-icon { background: #0d6efd; color: white; }
   </style>
 </head>
-<body class="p-3 p-md-5">
-  <div class="container max-w-lg">
-    <!-- Header principal -->
-    <header class="text-center mb-4">
-      <h2 class="fw-bold text-primary">Red Solidaria Villahermosa</h2>
-      <p class="text-muted mb-2">Demostración de Autenticación JWT y Control de Acceso Basado en Roles (RBAC)</p>
-      <div id="apiHealth" class="badge bg-secondary p-2">Comprobando conexión con la API...</div>
-    </header>
+<body>
 
-    <!-- NAVEGACIÓN POR PESTAÑAS (TABS) -->
-    <ul class="nav nav-pills nav-justified mb-4 card p-2 bg-white flex-column flex-sm-row" id="mainTabs" role="tablist">
+  <!-- Encabezado Principal -->
+  <header class="hero-header text-center">
+    <div class="container">
+      <h1 class="fw-bold"><i class="bi bi-heart-pulse-fill me-2"></i>Red Solidaria Villahermosa</h1>
+      <p class="lead mb-2">Plataforma Web para la Gestión y Trazabilidad de Donaciones</p>
+      <span id="api-status" class="badge bg-secondary status-badge">Verificando estado de API...</span>
+    </div>
+  </header>
+
+  <div class="container mb-5">
+    <!-- Menú de Navegación por Pestañas -->
+    <ul class="nav nav-pills nav-fill mb-4" id="mainTab" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">
-          1. Registro de Usuario
+        <button class="nav-link active" id="tab-auth-tab" data-bs-toggle="pill" data-bs-target="#tab-auth" type="button" role="tab">
+          <i class="bi bi-person-badge me-1"></i> 1. Registro e Inicio
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">
-          2. Inicio de Sesión (Login JWT)
+        <button class="nav-link" id="tab-rbac-tab" data-bs-toggle="pill" data-bs-target="#tab-rbac" type="button" role="tab">
+          <i class="bi bi-shield-lock me-1"></i> 2. Pruebas RBAC
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="rbac-tab" data-bs-toggle="tab" data-bs-target="#rbac-pane" type="button" role="tab">
-          3. Pruebas de Roles (RBAC)
+        <button class="nav-link" id="tab-donations-tab" data-bs-toggle="pill" data-bs-target="#tab-donations" type="button" role="tab">
+          <i class="bi bi-box-seam me-1"></i> 3. Gestor de Donaciones
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-map-tab" data-bs-toggle="pill" data-bs-target="#tab-map" type="button" role="tab">
+          <i class="bi bi-geo-alt me-1"></i> 4. Centros de Acopio
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-traceability-tab" data-bs-toggle="pill" data-bs-target="#tab-traceability" type="button" role="tab">
+          <i class="bi bi-diagram-3 me-1"></i> 5. Trazabilidad
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-admin-tab" data-bs-toggle="pill" data-bs-target="#tab-admin" type="button" role="tab">
+          <i class="bi bi-speedometer2 me-1"></i> 6. Panel Admin / RSC
         </button>
       </li>
     </ul>
 
-    <!-- CONTENIDO DE LAS PESTAÑAS -->
-    <div class="tab-content" id="mainTabsContent">
-      
-      <!-- PESTAÑA 1: REGISTRO -->
-      <div class="tab-pane fade show active" id="register-pane" role="tabpanel" aria-labelledby="register-tab">
-        <div class="card p-4 mx-auto" style="max-width: 600px;">
-          <h4 class="mb-3 text-secondary">Crear Nueva Cuenta</h4>
-          <form id="registerForm">
-            <div class="mb-3">
-              <label class="form-label fw-bold">Nombre Completo</label>
-              <input type="text" id="regName" class="form-control" placeholder="Ej. Ana Gómez" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Correo Electrónico</label>
-              <input type="email" id="regEmail" class="form-control" placeholder="ana@ejemplo.com" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Contraseña</label>
-              <input type="password" id="regPassword" class="form-control" placeholder="Mínimo 6 caracteres" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Rol a Asignar</label>
-              <select id="regRole" class="form-select" required>
-                <option value="donante">Donante</option>
-                <option value="empresa">Empresa</option>
-                <option value="organizacion">Organización</option>
-                <option value="administrador">Administrador</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-bold">Registrar Usuario</button>
-          </form>
-          <div id="registerResult" class="mt-3"></div>
-        </div>
-      </div>
+    <div class="tab-content" id="mainTabContent">
 
-      <!-- PESTAÑA 2: LOGIN -->
-      <div class="tab-pane fade" id="login-pane" role="tabpanel" aria-labelledby="login-tab">
-        <div class="card p-4 mx-auto" style="max-width: 600px;">
-          <h4 class="mb-3 text-secondary">Autenticación de Usuario</h4>
-          <form id="loginForm">
-            <div class="mb-3">
-              <label class="form-label fw-bold">Correo Electrónico</label>
-              <input type="email" id="loginEmail" class="form-control" placeholder="ana@ejemplo.com" required>
+      <!-- PESTAÑA 1: REGISTRO E INICIO DE SESIÓN -->
+      <div class="tab-pane fade show active" id="tab-auth" role="tabpanel">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card card-custom p-4">
+              <h4 class="card-title mb-3 text-primary"><i class="bi bi-person-plus me-2"></i>Crear Cuenta</h4>
+              <form id="form-register">
+                <div class="mb-3">
+                  <label class="form-label">Nombre Completo</label>
+                  <input type="text" id="reg-name" class="form-control" placeholder="Ej. Ana Gómez" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Correo Electrónico</label>
+                  <input type="email" id="reg-email" class="form-control" placeholder="ana@ejemplo.com" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Contraseña</label>
+                  <input type="password" id="reg-password" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Rol de Usuario</label>
+                  <select id="reg-role" class="form-select">
+                    <option value="Donante">Donante (Persona Física)</option>
+                    <option value="Empresa">Empresa / Comercio</option>
+                    <option value="Organización">Organización Social</option>
+                    <option value="Admin">Administrador</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Registrar Usuario</button>
+              </form>
+              <div id="reg-result" class="mt-3"></div>
             </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Contraseña</label>
-              <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card card-custom p-4">
+              <h4 class="card-title mb-3 text-success"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión (JWT)</h4>
+              <form id="form-login">
+                <div class="mb-3">
+                  <label class="form-label">Correo Electrónico</label>
+                  <input type="email" id="login-email" class="form-control" placeholder="ana@ejemplo.com" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Contraseña</label>
+                  <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Obtener Token JWT</button>
+              </form>
+              <div id="login-result" class="mt-3"></div>
             </div>
-            <button type="submit" class="btn btn-primary w-100 fw-bold">Iniciar Sesión</button>
-          </form>
-
-          <div id="loginResult" class="mt-3"></div>
-
-          <!-- Token Viewer -->
-          <div id="tokenContainer" class="d-none mt-4 p-3 bg-light border rounded">
-            <h6 class="fw-bold text-success">✓ Sesión Activa — Token JWT Generado:</h6>
-            <div id="jwtTokenDisplay" class="p-2 bg-dark text-success rounded token-box my-2"></div>
-            <button class="btn btn-sm btn-outline-primary mt-1" onclick="switchToRbacTab()">Ir a Probar Roles →</button>
           </div>
         </div>
       </div>
 
-      <!-- PESTAÑA 3: RBAC PRUEBAS -->
-      <div class="tab-pane fade" id="rbac-pane" role="tabpanel" aria-labelledby="rbac-tab">
-        <div class="card p-4">
-          <h4 class="mb-2 text-secondary">Verificación de Permisos según el Rol Active</h4>
-          <p class="text-muted small">Haz clic en los endpoints para enviar el Token JWT en el encabezado <code>Authorization: Bearer &lt;token&gt;</code> y evaluar el acceso.</p>
+      <!-- PESTAÑA 2: PRUEBAS RBAC -->
+      <div class="tab-pane fade" id="tab-rbac" role="tabpanel">
+        <div class="card card-custom p-4">
+          <h4 class="card-title text-primary"><i class="bi bi-shield-check me-2"></i>Verificación de Permisos RBAC</h4>
+          <p class="text-muted">Prueba el acceso a endpoints protegidos utilizando el Token JWT activo.</p>
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <button onclick="testRoute('/api/donations/my-donations')" class="btn btn-outline-primary"><i class="bi bi-bag-heart me-1"></i> RUTA DONANTE</button>
+            <button onclick="testRoute('/api/volunteer/tasks')" class="btn btn-outline-success"><i class="bi bi-list-task me-1"></i> RUTA VOLUNTARIO/ORG</button>
+            <button onclick="testRoute('/api/coordinator/resources')" class="btn btn-outline-warning"><i class="bi bi-diagram-2 me-1"></i> RUTA COORDINADOR</button>
+            <button onclick="testRoute('/api/admin/dashboard')" class="btn btn-outline-danger"><i class="bi bi-speedometer me-1"></i> RUTA ADMIN</button>
+          </div>
+          <div class="bg-dark text-light p-3 rounded font-monospace" id="rbac-output" style="min-height: 150px; overflow-x: auto;">
+            // Haz clic en un botón para probar los permisos de la ruta protegida...
+          </div>
+        </div>
+      </div>
 
-          <div class="d-flex gap-2 flex-wrap mb-4">
-            <button class="btn btn-success flex-fill" onclick="testEndpoint('/api/donante/historial')">
-              Historial Donante<br><small>(Permitido: Donante / Admin)</small>
-            </button>
-            <button class="btn btn-warning flex-fill" onclick="testEndpoint('/api/empresa/recursos')">
-              Recursos Empresa<br><small>(Permitido: Empresa / Admin)</small>
-            </button>
-            <button class="btn btn-danger flex-fill" onclick="testEndpoint('/api/admin/dashboard')">
-              Panel Administrador<br><small>(Permitido: Solo Admin)</small>
+      <!-- PESTAÑA 3: GESTOR DE DONACIONES -->
+      <div class="tab-pane fade" id="tab-donations" role="tabpanel">
+        <div class="row g-4">
+          <div class="col-md-5">
+            <div class="card card-custom p-4">
+              <h5 class="card-title text-primary"><i class="bi bi-plus-circle me-2"></i>Registrar Nueva Donación</h5>
+              <form id="form-donation-demo" onsubmit="addDonationDemo(event)">
+                <div class="mb-3">
+                  <label class="form-label">Recurso / Insumo</label>
+                  <input type="text" id="don-title" class="form-control" placeholder="Ej. Lote de 20kg de Arroz" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Categoría</label>
+                  <select id="don-cat" class="form-select">
+                    <option value="Alimentos">Alimentos Perecederos / No Perecederos</option>
+                    <option value="Ropa">Ropa y Calzado</option>
+                    <option value="Higiene">Productos de Higiene Personal</option>
+                    <option value="Medicamentos">Insumos Médicos Básicos</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Fecha de Caducidad / Consumo Preferente</label>
+                  <input type="date" id="don-exp" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Fotografía de Evidencia</label>
+                  <input type="file" class="form-control" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Publicar Donación</button>
+              </form>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <div class="card card-custom p-4">
+              <h5 class="card-title text-dark"><i class="bi bi-list-stars me-2"></i>Donaciones Activas en Villahermosa</h5>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Recurso</th>
+                      <th>Categoría</th>
+                      <th>Caducidad</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="donations-table-body">
+                    <tr>
+                      <td><code>#DON-2026-001</code></td>
+                      <td>50 Cajas de Leche UHT</td>
+                      <td><span class="badge bg-warning text-dark">Alimentos</span></td>
+                      <td>15/10/2026</td>
+                      <td><span class="badge bg-success">Registrada</span></td>
+                    </tr>
+                    <tr>
+                      <td><code>#DON-2026-002</code></td>
+                      <td>Lote de Cobijas y Ropa de Invierno</td>
+                      <td><span class="badge bg-info text-dark">Ropa</span></td>
+                      <td>N/A</td>
+                      <td><span class="badge bg-primary">Aceptada</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 4: CENTROS DE ACOPIO Y MAPA -->
+      <div class="tab-pane fade" id="tab-map" role="tabpanel">
+        <div class="card card-custom p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title text-primary m-0"><i class="bi bi-map me-2"></i>Mapa de Centros de Acopio en Villahermosa</h5>
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleMapFallback()">
+              <i class="bi bi-arrow-repeat me-1"></i> Cambiar Modo Respaldo (Texto)
             </button>
           </div>
 
-          <h6 class="fw-bold">Respuesta del Servidor HTTP:</h6>
-          <pre id="rbacOutput" class="p-3 bg-dark text-light rounded border mb-0" style="min-height: 140px; font-size: 0.9rem;">⚠️ Inicia sesión en la Pestaña 2 para obtener un token de autenticación antes de probar.</pre>
+          <!-- Vista Interactiva Simulada -->
+          <div id="map-view" class="bg-light border rounded p-5 text-center position-relative" style="min-height: 300px; background: url('https://maps.wikimedia.org/osm-intl/13/17.9892/-92.9281.png') center/cover;">
+            <div class="bg-white p-3 rounded shadow-sm d-inline-block position-relative" style="top: 80px;">
+              <h6 class="m-0 text-danger"><i class="bi bi-geo-alt-fill me-1"></i> Centro de Acopio Central - Zona Tabasco 2000</h6>
+              <small class="text-muted">Capacidad de Recepción: ALTA | Horario: 8:00 AM - 6:00 PM</small>
+            </div>
+          </div>
+
+          <!-- Vista de Mitigación en Texto -->
+          <div id="map-fallback" class="d-none mt-3">
+            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-2"></i><strong>Modo Contingencia Activado:</strong> Mostrando directorio en texto plano por indisponibilidad de mapas externos.</div>
+            <ul class="list-group">
+              <li class="list-group-item"><strong>Centro de Acopio Tabasco 2000:</strong> Av. Paseo Tabasco #1504, Col. Tabasco 2000. Tel: 993-123-4567</li>
+              <li class="list-group-item"><strong>Centro de Acopio Tamulté:</strong> Calle Libertad #203, Col. Tamulté de las Barrancas. Tel: 993-987-6543</li>
+              <li class="list-group-item"><strong>Centro de Acopio Tamulté/Centro:</strong> Av. Gregorio Méndez Magaña #802. Tel: 993-555-0192</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 5: TRAZABILIDAD -->
+      <div class="tab-pane fade" id="tab-traceability" role="tabpanel">
+        <div class="card card-custom p-4">
+          <h5 class="card-title text-primary mb-3"><i class="bi bi-search me-2"></i>Consulta de Trazabilidad e Historial</h5>
+          <div class="input-group mb-4" style="max-width: 500px;">
+            <input type="text" class="form-control" value="#DON-2026-001" readonly>
+            <button class="btn btn-primary" type="button"><i class="bi bi-search me-1"></i> Consultar Estado</button>
+          </div>
+
+          <div class="border rounded p-4 bg-white">
+            <h6>Trazabilidad para la donación: <strong class="text-primary">#DON-2026-001 (50 Cajas de Leche UHT)</strong></h6>
+            <div class="timeline-steps">
+              <div class="timeline-step completed">
+                <div class="timeline-icon"><i class="bi bi-check-lg"></i></div>
+                <strong>1. Registrada</strong>
+                <div class="small text-muted">22/Sep/2026</div>
+              </div>
+              <div class="timeline-step completed">
+                <div class="timeline-icon"><i class="bi bi-check-lg"></i></div>
+                <strong>2. Aceptada</strong>
+                <div class="small text-muted">22/Sep/2026</div>
+              </div>
+              <div class="timeline-step active">
+                <div class="timeline-icon">3</div>
+                <strong>3. En Proceso</strong>
+                <div class="small text-primary">En Traslado por Voluntarios</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-icon">4</div>
+                <strong>4. Entregada</strong>
+                <div class="small text-muted">Pendiente de firma final</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 6: PANEL ADMIN / REPORTES RSC -->
+      <div class="tab-pane fade" id="tab-admin" role="tabpanel">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card card-custom p-4">
+              <h5 class="card-title text-danger"><i class="bi bi-building-check me-2"></i>Aprobación de Empresas y Organizaciones</h5>
+              <div class="list-group mt-3">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-0">Supermercados Del Centro S.A.</h6>
+                    <small class="text-muted">Solicitud de cuenta tipo: EMPRESA</small>
+                  </div>
+                  <div>
+                    <button class="btn btn-sm btn-success me-1"><i class="bi bi-check"></i></button>
+                    <button class="btn btn-sm btn-danger"><i class="bi bi-x"></i></button>
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-0">Fundación Apoyo Tabasco A.C.</h6>
+                    <small class="text-muted">Solicitud de cuenta tipo: ORGANIZACIÓN</small>
+                  </div>
+                  <div>
+                    <button class="btn btn-sm btn-success me-1"><i class="bi bi-check"></i></button>
+                    <button class="btn btn-sm btn-danger"><i class="bi bi-x"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card card-custom p-4">
+              <h5 class="card-title text-primary"><i class="bi bi-file-earmark-pdf me-2"></i>Reportes de Impacto Social (RSC)</h5>
+              <p class="small text-muted">Descarga automática de informes para la presentación de responsabilidad social corporativa.</p>
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary text-start" onclick="alert('Generando Reporte de Impacto Social en PDF...')">
+                  <i class="bi bi-download me-2"></i> Descargar Reporte Mensual de Impacto (PDF)
+                </button>
+                <button class="btn btn-outline-success text-start" onclick="alert('Generando Consolidado de Donaciones en Excel...')">
+                  <i class="bi bi-file-earmark-excel me-2"></i> Exportar Registro Completo de Donaciones (CSV/Excel)
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- JS de Bootstrap para el funcionamiento de las pestañas -->
+  <!-- Bootstrap 5 JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Lógica JavaScript del Frontend -->
+  <!-- Lógica JavaScript -->
   <script>
-    let currentToken = '';
+    let activeToken = '';
 
-    // Comprobar /health de la API
-    fetch('/health')
-      .then(res => res.json())
-      .then(data => {
-        const el = document.getElementById('apiHealth');
-        if (data.status === 'ok') {
-          el.className = 'badge bg-success p-2';
-          el.innerText = 'API en Línea (Status: OK)';
+    // Checkear API Status
+    async function checkHealth() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        if (data.success) {
+          const badge = document.getElementById('api-status');
+          badge.className = 'badge bg-success status-badge';
+          badge.innerText = 'API en Línea (Status: OK)';
         }
-      })
-      .catch(() => {
-        const el = document.getElementById('apiHealth');
-        el.className = 'badge bg-danger p-2';
-        el.innerText = 'Error de conexión con el backend';
-      });
+      } catch (err) {
+        const badge = document.getElementById('api-status');
+        badge.className = 'badge bg-danger status-badge';
+        badge.innerText = 'API Desconectada';
+      }
+    }
+    checkHealth();
 
-    // 1. Registro (POST /api/register)
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    // Manejar Registro
+    document.getElementById('form-register').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const nombre = document.getElementById('regName').value;
-      const email = document.getElementById('regEmail').value;
-      const password = document.getElementById('regPassword').value;
-      const rol = document.getElementById('regRole').value;
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const role = document.getElementById('reg-role').value;
 
       try {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, email, password, rol })
+          body: JSON.stringify({ name, email, password, role })
         });
         const data = await res.json();
-
-        if (res.ok) {
-          document.getElementById('registerResult').innerHTML = 
-            `<div class="alert alert-success p-2 small">¡Usuario registrado con éxito! Redirigiendo al Login...</div>`;
-          document.getElementById('loginEmail').value = email;
-          document.getElementById('loginPassword').value = password;
-
-          // Cambiar automáticamente a la pestaña de login tras 1.2s
-          setTimeout(() => {
-            const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
-            loginTab.show();
-          }, 1200);
-        } else {
-          document.getElementById('registerResult').innerHTML = 
-            `<div class="alert alert-danger p-2 small">${data.message || 'Error al registrar usuario'}</div>`;
-        }
+        document.getElementById('reg-result').innerHTML = `<div class="alert alert-${res.ok ? 'success' : 'danger'} p-2">${data.message || 'Usuario registrado exitosamente'}</div>`;
       } catch (err) {
-        document.getElementById('registerResult').innerHTML = `<div class="alert alert-danger p-2 small">Error de conexión con el servidor</div>`;
+        document.getElementById('reg-result').innerHTML = `<div class="alert alert-danger p-2">Error al conectar con el servidor</div>`;
       }
     });
 
-    // 2. Login (POST /api/login)
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    // Manejar Login
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
 
       try {
         const res = await fetch('/api/login', {
@@ -202,49 +387,60 @@
           body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-
-        const token = data?.data?.token || data?.token;
-
-        if (res.ok && token) {
-          currentToken = token;
-          document.getElementById('loginResult').innerHTML = 
-            `<div class="alert alert-success p-2 small">Autenticación exitosa. Token obtenido.</div>`;
-          document.getElementById('tokenContainer').classList.remove('d-none');
-          document.getElementById('jwtTokenDisplay').innerText = currentToken;
-          document.getElementById('rbacOutput').innerText = 'Token listo. Haz clic en un botón para probar los accesos RBAC.';
+        if (data.token) {
+          activeToken = data.token;
+          document.getElementById('login-result').innerHTML = `<div class="alert alert-success p-2"><strong>¡Login Exitoso!</strong> Token JWT guardado en memoria.</div>`;
         } else {
-          document.getElementById('loginResult').innerHTML = 
-            `<div class="alert alert-danger p-2 small">${data.message || 'Credenciales inválidas'}</div>`;
+          document.getElementById('login-result').innerHTML = `<div class="alert alert-danger p-2">${data.message || 'Credenciales inválidas'}</div>`;
         }
       } catch (err) {
-        document.getElementById('loginResult').innerHTML = `<div class="alert alert-danger p-2 small">Error de conexión con el servidor</div>`;
+        document.getElementById('login-result').innerHTML = `<div class="alert alert-danger p-2">Error de conexión</div>`;
       }
     });
 
-    // Función aux para saltar a la pestaña RBAC
-    function switchToRbacTab() {
-      const rbacTab = new bootstrap.Tab(document.getElementById('rbac-tab'));
-      rbacTab.show();
-    }
-
-    // 3. Pruebas de Roles (RBAC)
-    async function testEndpoint(endpoint) {
-      const output = document.getElementById('rbacOutput');
-      if (!currentToken) {
-        output.innerText = '⚠️ Debes autenticarte en la Pestaña 2 para obtener un Token JWT válido.';
-        return;
-      }
-
+    // Probar Ruta RBAC
+    async function testRoute(endpoint) {
+      const out = document.getElementById('rbac-output');
+      out.innerText = 'Cargando respuesta...';
       try {
         const res = await fetch(endpoint, {
-          headers: { 'Authorization': `Bearer ${currentToken}` }
+          headers: { 'Authorization': `Bearer ${activeToken}` }
         });
         const data = await res.json();
-        
-        output.innerText = `HTTP Status: ${res.status} ${res.statusText}\n\n` + JSON.stringify(data, null, 2);
+        out.innerText = `HTTP ${res.status}\n` + JSON.stringify(data, null, 2);
       } catch (err) {
-        output.innerText = 'Error al realizar la petición al servidor.';
+        out.innerText = 'Error al consultar la ruta.';
       }
+    }
+
+    // Agregar Donación Demo
+    function addDonationDemo(e) {
+      e.preventDefault();
+      const title = document.getElementById('don-title').value;
+      const cat = document.getElementById('don-cat').value;
+      const exp = document.getElementById('don-exp').value;
+      const id = '#DON-2026-00' + (Math.floor(Math.random() * 90) + 10);
+
+      const tbody = document.getElementById('donations-table-body');
+      const newRow = `
+        <tr>
+          <td><code>${id}</code></td>
+          <td>${title}</td>
+          <td><span class="badge bg-primary text-light">${cat}</span></td>
+          <td>${exp || 'N/A'}</td>
+          <td><span class="badge bg-success">Registrada</span></td>
+        </tr>`;
+      tbody.innerHTML = newRow + tbody.innerHTML;
+      document.getElementById('form-donation-demo').reset();
+      alert('¡Donación publicada con éxito!');
+    }
+
+    // Toggle Respaldo de Mapa
+    function toggleMapFallback() {
+      const map = document.getElementById('map-view');
+      const fallback = document.getElementById('map-fallback');
+      map.classList.toggle('d-none');
+      fallback.classList.toggle('d-none');
     }
   </script>
 </body>
