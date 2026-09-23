@@ -4,41 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Red Solidaria Villahermosa — Panel Interactivo</title>
+  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background-color: #f8f9fa; }
-    .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .token-box { word-break: break-all; font-family: monospace; font-size: 0.82rem; }
+    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .nav-pills .nav-link { font-weight: 600; color: #495057; border-radius: 8px; padding: 0.6rem 1.2rem; }
+    .nav-pills .nav-link.active { background-color: #0d6efd; color: #fff; }
+    .token-box { word-break: break-all; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; max-height: 120px; overflow-y: auto; }
   </style>
 </head>
-<body class="p-4">
+<body class="p-3 p-md-5">
   <div class="container max-w-lg">
+    <!-- Header principal -->
     <header class="text-center mb-4">
       <h2 class="fw-bold text-primary">Red Solidaria Villahermosa</h2>
-      <p class="text-muted">Módulo de Autenticación JWT y Control de Acceso por Roles (RBAC)</p>
-      <div id="apiHealth" class="badge bg-secondary p-2">Comprobando estado de API...</div>
+      <p class="text-muted mb-2">Demostración de Autenticación JWT y Control de Acceso Basado en Roles (RBAC)</p>
+      <div id="apiHealth" class="badge bg-secondary p-2">Comprobando conexión con la API...</div>
     </header>
 
-    <div class="row g-4">
-      <!-- 1. REGISTRO DE USUARIOS -->
-      <div class="col-md-6">
-        <div class="card p-4 h-100">
-          <h4 class="mb-3 text-secondary">1. Registro de Usuario</h4>
+    <!-- NAVEGACIÓN POR PESTAÑAS (TABS) -->
+    <ul class="nav nav-pills nav-justified mb-4 card p-2 bg-white flex-column flex-sm-row" id="mainTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">
+          1. Registro de Usuario
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">
+          2. Inicio de Sesión (Login JWT)
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="rbac-tab" data-bs-toggle="tab" data-bs-target="#rbac-pane" type="button" role="tab">
+          3. Pruebas de Roles (RBAC)
+        </button>
+      </li>
+    </ul>
+
+    <!-- CONTENIDO DE LAS PESTAÑAS -->
+    <div class="tab-content" id="mainTabsContent">
+      
+      <!-- PESTAÑA 1: REGISTRO -->
+      <div class="tab-pane fade show active" id="register-pane" role="tabpanel" aria-labelledby="register-tab">
+        <div class="card p-4 mx-auto" style="max-width: 600px;">
+          <h4 class="mb-3 text-secondary">Crear Nueva Cuenta</h4>
           <form id="registerForm">
             <div class="mb-3">
-              <label class="form-label">Nombre completo</label>
+              <label class="form-label fw-bold">Nombre Completo</label>
               <input type="text" id="regName" class="form-control" placeholder="Ej. Ana Gómez" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Correo electrónico</label>
+              <label class="form-label fw-bold">Correo Electrónico</label>
               <input type="email" id="regEmail" class="form-control" placeholder="ana@ejemplo.com" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Contraseña</label>
+              <label class="form-label fw-bold">Contraseña</label>
               <input type="password" id="regPassword" class="form-control" placeholder="Mínimo 6 caracteres" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Rol del Sistema</label>
+              <label class="form-label fw-bold">Rol a Asignar</label>
               <select id="regRole" class="form-select" required>
                 <option value="donante">Donante</option>
                 <option value="empresa">Empresa</option>
@@ -46,66 +71,73 @@
                 <option value="administrador">Administrador</option>
               </select>
             </div>
-            <button type="submit" class="btn btn-outline-primary w-100">Registrar Usuario</button>
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Registrar Usuario</button>
           </form>
           <div id="registerResult" class="mt-3"></div>
         </div>
       </div>
 
-      <!-- 2. LOGIN Y OBTENCIÓN DE JWT -->
-      <div class="col-md-6">
-        <div class="card p-4 h-100">
-          <h4 class="mb-3 text-secondary">2. Inicio de Sesión (Login JWT)</h4>
+      <!-- PESTAÑA 2: LOGIN -->
+      <div class="tab-pane fade" id="login-pane" role="tabpanel" aria-labelledby="login-tab">
+        <div class="card p-4 mx-auto" style="max-width: 600px;">
+          <h4 class="mb-3 text-secondary">Autenticación de Usuario</h4>
           <form id="loginForm">
             <div class="mb-3">
-              <label class="form-label">Correo electrónico</label>
-              <input type="email" id="loginEmail" class="form-control" placeholder="admin@redsolidaria.org" required>
+              <label class="form-label fw-bold">Correo Electrónico</label>
+              <input type="email" id="loginEmail" class="form-control" placeholder="ana@ejemplo.com" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Contraseña</label>
+              <label class="form-label fw-bold">Contraseña</label>
               <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Iniciar Sesión</button>
           </form>
 
           <div id="loginResult" class="mt-3"></div>
-          
-          <div id="tokenContainer" class="d-none mt-3">
-            <h6>Token JWT Activo:</h6>
-            <div id="jwtTokenDisplay" class="p-2 bg-dark text-success rounded token-box"></div>
+
+          <!-- Token Viewer -->
+          <div id="tokenContainer" class="d-none mt-4 p-3 bg-light border rounded">
+            <h6 class="fw-bold text-success">✓ Sesión Activa — Token JWT Generado:</h6>
+            <div id="jwtTokenDisplay" class="p-2 bg-dark text-success rounded token-box my-2"></div>
+            <button class="btn btn-sm btn-outline-primary mt-1" onclick="switchToRbacTab()">Ir a Probar Roles →</button>
           </div>
         </div>
       </div>
 
-      <!-- 3. VERIFICACIÓN DE ROLES (RBAC) -->
-      <div class="col-12">
+      <!-- PESTAÑA 3: RBAC PRUEBAS -->
+      <div class="tab-pane fade" id="rbac-pane" role="tabpanel" aria-labelledby="rbac-tab">
         <div class="card p-4">
-          <h4 class="mb-2 text-secondary">3. Prueba de Autorización por Roles (RBAC)</h4>
-          <p class="text-muted small">Haz clic en los botones para probar el middleware de roles. La petición enviará el Token JWT mediante el encabezado <code>Authorization: Bearer &lt;token&gt;</code>.</p>
-          
-          <div class="d-flex gap-2 flex-wrap mb-3">
-            <button class="btn btn-success" onclick="testEndpoint('/api/donante/historial')">
-              Historial Donante <br><small>(Donante / Admin)</small>
+          <h4 class="mb-2 text-secondary">Verificación de Permisos según el Rol Active</h4>
+          <p class="text-muted small">Haz clic en los endpoints para enviar el Token JWT en el encabezado <code>Authorization: Bearer &lt;token&gt;</code> y evaluar el acceso.</p>
+
+          <div class="d-flex gap-2 flex-wrap mb-4">
+            <button class="btn btn-success flex-fill" onclick="testEndpoint('/api/donante/historial')">
+              Historial Donante<br><small>(Permitido: Donante / Admin)</small>
             </button>
-            <button class="btn btn-warning" onclick="testEndpoint('/api/empresa/recursos')">
-              Recursos Empresa <br><small>(Empresa / Admin)</small>
+            <button class="btn btn-warning flex-fill" onclick="testEndpoint('/api/empresa/recursos')">
+              Recursos Empresa<br><small>(Permitido: Empresa / Admin)</small>
             </button>
-            <button class="btn btn-danger" onclick="testEndpoint('/api/admin/dashboard')">
-              Panel Administrador <br><small>(Solo Admin)</small>
+            <button class="btn btn-danger flex-fill" onclick="testEndpoint('/api/admin/dashboard')">
+              Panel Administrador<br><small>(Permitido: Solo Admin)</small>
             </button>
           </div>
 
-          <h6>Respuesta del Servidor (API):</h6>
-          <pre id="rbacOutput" class="p-3 bg-dark text-light rounded border mb-0" style="min-height: 100px; font-size: 0.88rem;">Inicia sesión para obtener un token JWT y realizar pruebas de acceso.</pre>
+          <h6 class="fw-bold">Respuesta del Servidor HTTP:</h6>
+          <pre id="rbacOutput" class="p-3 bg-dark text-light rounded border mb-0" style="min-height: 140px; font-size: 0.9rem;">⚠️ Inicia sesión en la Pestaña 2 para obtener un token de autenticación antes de probar.</pre>
         </div>
       </div>
+
     </div>
   </div>
 
+  <!-- JS de Bootstrap para el funcionamiento de las pestañas -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Lógica JavaScript del Frontend -->
   <script>
     let currentToken = '';
 
-    // Estado del servidor (/health)
+    // Comprobar /health de la API
     fetch('/health')
       .then(res => res.json())
       .then(data => {
@@ -118,10 +150,10 @@
       .catch(() => {
         const el = document.getElementById('apiHealth');
         el.className = 'badge bg-danger p-2';
-        el.innerText = 'Error de conexión con la API';
+        el.innerText = 'Error de conexión con el backend';
       });
 
-    // 1. Registro de Usuario (POST /api/register)
+    // 1. Registro (POST /api/register)
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = document.getElementById('regName').value;
@@ -139,12 +171,18 @@
 
         if (res.ok) {
           document.getElementById('registerResult').innerHTML = 
-            `<div class="alert alert-success p-2 small">Usuario registrado con éxito. Ahora puedes hacer Login.</div>`;
+            `<div class="alert alert-success p-2 small">¡Usuario registrado con éxito! Redirigiendo al Login...</div>`;
           document.getElementById('loginEmail').value = email;
           document.getElementById('loginPassword').value = password;
+
+          // Cambiar automáticamente a la pestaña de login tras 1.2s
+          setTimeout(() => {
+            const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
+            loginTab.show();
+          }, 1200);
         } else {
           document.getElementById('registerResult').innerHTML = 
-            `<div class="alert alert-danger p-2 small">${data.message || 'Error al registrar'}</div>`;
+            `<div class="alert alert-danger p-2 small">${data.message || 'Error al registrar usuario'}</div>`;
         }
       } catch (err) {
         document.getElementById('registerResult').innerHTML = `<div class="alert alert-danger p-2 small">Error de conexión con el servidor</div>`;
@@ -165,20 +203,15 @@
         });
         const data = await res.json();
 
-        if (res.ok && data.data && data.data.token) {
-          currentToken = data.data.token;
+        const token = data?.data?.token || data?.token;
+
+        if (res.ok && token) {
+          currentToken = token;
           document.getElementById('loginResult').innerHTML = 
-            `<div class="alert alert-success p-2 small">Autenticación exitosa. Token JWT recibido.</div>`;
+            `<div class="alert alert-success p-2 small">Autenticación exitosa. Token obtenido.</div>`;
           document.getElementById('tokenContainer').classList.remove('d-none');
           document.getElementById('jwtTokenDisplay').innerText = currentToken;
-          document.getElementById('rbacOutput').innerText = 'Token JWT guardado. Haz clic en un botón de arriba para validar los accesos RBAC.';
-        } else if (res.ok && data.token) {
-          currentToken = data.token;
-          document.getElementById('loginResult').innerHTML = 
-            `<div class="alert alert-success p-2 small">Autenticación exitosa. Token JWT recibido.</div>`;
-          document.getElementById('tokenContainer').classList.remove('d-none');
-          document.getElementById('jwtTokenDisplay').innerText = currentToken;
-          document.getElementById('rbacOutput').innerText = 'Token JWT guardado. Haz clic en un botón de arriba para validar los accesos RBAC.';
+          document.getElementById('rbacOutput').innerText = 'Token listo. Haz clic en un botón para probar los accesos RBAC.';
         } else {
           document.getElementById('loginResult').innerHTML = 
             `<div class="alert alert-danger p-2 small">${data.message || 'Credenciales inválidas'}</div>`;
@@ -188,11 +221,17 @@
       }
     });
 
-    // 3. Verificación RBAC
+    // Función aux para saltar a la pestaña RBAC
+    function switchToRbacTab() {
+      const rbacTab = new bootstrap.Tab(document.getElementById('rbac-tab'));
+      rbacTab.show();
+    }
+
+    // 3. Pruebas de Roles (RBAC)
     async function testEndpoint(endpoint) {
       const output = document.getElementById('rbacOutput');
       if (!currentToken) {
-        output.innerText = '⚠️ Debes registrarte o iniciar sesión para obtener el Token JWT antes de probar.';
+        output.innerText = '⚠️ Debes autenticarte en la Pestaña 2 para obtener un Token JWT válido.';
         return;
       }
 
