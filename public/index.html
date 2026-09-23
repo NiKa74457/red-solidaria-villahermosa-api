@@ -340,7 +340,7 @@
       try {
         const res = await fetch('/health');
         const data = await res.json();
-        if (data.success) {
+        if (data.success || data.status === 'ok') {
           const badge = document.getElementById('api-status');
           badge.className = 'badge bg-success status-badge';
           badge.innerText = 'API en Línea (Status: OK)';
@@ -353,10 +353,10 @@
     }
     checkHealth();
 
-    // Manejar Registro
+    // Manejar Registro (Actualizado para enviar 'nombre' y 'name' simultáneamente)
     document.getElementById('form-register').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('reg-name').value;
+      const nameVal = document.getElementById('reg-name').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
       const role = document.getElementById('reg-role').value;
@@ -365,7 +365,7 @@
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password, role })
+          body: JSON.stringify({ nombre: nameVal, name: nameVal, email, password, role })
         });
         const data = await res.json();
         document.getElementById('reg-result').innerHTML = `<div class="alert alert-${res.ok ? 'success' : 'danger'} p-2">${data.message || 'Usuario registrado exitosamente'}</div>`;
@@ -387,8 +387,9 @@
           body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-        if (data.token) {
-          activeToken = data.token;
+        const token = data?.data?.token || data?.token;
+        if (token) {
+          activeToken = token;
           document.getElementById('login-result').innerHTML = `<div class="alert alert-success p-2"><strong>¡Login Exitoso!</strong> Token JWT guardado en memoria.</div>`;
         } else {
           document.getElementById('login-result').innerHTML = `<div class="alert alert-danger p-2">${data.message || 'Credenciales inválidas'}</div>`;
