@@ -92,10 +92,10 @@
                 <div class="mb-3">
                   <label class="form-label">Rol de Usuario</label>
                   <select id="reg-role" class="form-select">
-                    <option value="Donante">Donante (Persona Física)</option>
-                    <option value="Empresa">Empresa / Comercio</option>
-                    <option value="Organización">Organización Social</option>
-                    <option value="Admin">Administrador</option>
+                    <option value="donante">Donante</option>
+                    <option value="empresa">Empresa</option>
+                    <option value="organizacion">Organización</option>
+                    <option value="administrador">Administrador</option>
                   </select>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Registrar Usuario</button>
@@ -130,9 +130,9 @@
           <h4 class="card-title text-primary"><i class="bi bi-shield-check me-2"></i>Verificación de Permisos RBAC</h4>
           <p class="text-muted">Prueba el acceso a endpoints protegidos utilizando el Token JWT activo.</p>
           <div class="d-flex flex-wrap gap-2 mb-4">
-            <button onclick="testRoute('/api/donations/my-donations')" class="btn btn-outline-primary"><i class="bi bi-bag-heart me-1"></i> RUTA DONANTE</button>
-            <button onclick="testRoute('/api/volunteer/tasks')" class="btn btn-outline-success"><i class="bi bi-list-task me-1"></i> RUTA VOLUNTARIO/ORG</button>
-            <button onclick="testRoute('/api/coordinator/resources')" class="btn btn-outline-warning"><i class="bi bi-diagram-2 me-1"></i> RUTA COORDINADOR</button>
+            <button onclick="testRoute('/api/donante/historial')" class="btn btn-outline-primary"><i class="bi bi-bag-heart me-1"></i> RUTA DONANTE</button>
+            <button onclick="testRoute('/api/empresa/recursos')" class="btn btn-outline-success"><i class="bi bi-box-seam me-1"></i> RUTA EMPRESA</button>
+            <button onclick="testRoute('/api/organizacion/campanas')" class="btn btn-outline-warning"><i class="bi bi-diagram-2 me-1"></i> RUTA ORGANIZACIÓN</button>
             <button onclick="testRoute('/api/admin/dashboard')" class="btn btn-outline-danger"><i class="bi bi-speedometer me-1"></i> RUTA ADMIN</button>
           </div>
           <div class="bg-dark text-light p-3 rounded font-monospace" id="rbac-output" style="min-height: 150px; overflow-x: auto;">
@@ -353,7 +353,7 @@
     }
     checkHealth();
 
-    // Manejar Registro (Actualizado para enviar 'nombre' y 'name' simultáneamente)
+    // Manejar Registro (Envía 'nombre' y 'name' simultáneamente)
     document.getElementById('form-register').addEventListener('submit', async (e) => {
       e.preventDefault();
       const nameVal = document.getElementById('reg-name').value;
@@ -399,7 +399,7 @@
       }
     });
 
-    // Probar Ruta RBAC
+    // Probar Ruta RBAC (con endpoints correctos)
     async function testRoute(endpoint) {
       const out = document.getElementById('rbac-output');
       out.innerText = 'Cargando respuesta...';
